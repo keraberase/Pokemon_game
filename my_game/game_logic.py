@@ -14,5 +14,5 @@ def get_battle_index(card_locations):
 def hit_test(pos, x, y, w=CARD_W, h=CARD_H):
     return x < pos[0] < x + w and y < pos[1] < y + h
 
-# def draw_text(font, text, pos, color=(255, 255, 255)):
-#     screen.blit(font.render(text, True, color), pos)
+def draw_text(screen, font, text, pos, color=(255, 255, 255)):
+    screen.blit(font.render(text, True, color), pos)
