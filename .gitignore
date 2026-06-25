@@ -5,10 +5,7 @@ __pycache__/
 
 
 cache/
-*.png
-*.jpg
-*.jpeg
-*.gif
+
 
 
 .vscode/
