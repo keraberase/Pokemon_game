@@ -7,8 +7,10 @@ BENCH_STEP = 101
 ZONES = {
     "enemy_bench_start": (153, 19),
     "enemy_battle":      (558, 225),
+    "enemy_trash": (20, 35),
     "player_bench_start":(153, 480),
     "player_battle":     (153, 275),
     "player_deck":       (693, 345),
     "player_trash":      (693, 470),
+    
 }
