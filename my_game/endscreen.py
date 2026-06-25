@@ -17,5 +17,3 @@ def draw_end_screen(screen, font, message, color):
     
     small_text = font.render("ESC - exit  |  R - restart", True, (200, 200, 200))
     screen.blit(small_text, ((SCREEN_W - small_text.get_width()) // 2, y + 100))
-
-    pygame.display.flip()

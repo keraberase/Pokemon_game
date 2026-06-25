@@ -33,7 +33,7 @@ def render(game):
     for i in range(bench_count):
         game.screen.blit(game.card_back, (ebx + i * BENCH_STEP, eby))
 
-    draw_trash(game.screen, game.player_images, game.card_back, game.card_locations, game.enemy_locations, ZONES)
+    draw_trash(game.screen, game.card_back, game.card_locations, game.enemy_locations, ZONES)
 
     if game.dragging and game.dragged_card_index is not None:
         game.screen.blit(game.player_images[game.dragged_card_index], (game.drag_pos[0] - 45, game.drag_pos[1] - 51))
@@ -47,36 +47,35 @@ def render(game):
 
     mouse_pos = pygame.mouse.get_pos()
     game.screen.blit(game.font.render(f"X:{mouse_pos[0]} Y:{mouse_pos[1]}", True, (255, 255, 0)), (10, 10))
-    # display finish game
+    # game over
     if game.game_over:
         if game.game_result == "win":
             draw_end_screen(game.screen, game.font, "YOU WIN!", (255, 215, 0))
         else:
             draw_end_screen(game.screen, game.font, "YOU LOSE!", (255, 0, 0))
+    else:
+        cx, cy = SCREEN_W // 2, SCREEN_H // 2
+        volume = pygame.mixer.music.get_volume()
+        color = (255, 200, 0) if volume > 0 else (100, 100, 100)
 
-    cx, cy = SCREEN_W // 2, SCREEN_H // 2
-    volume = pygame.mixer.music.get_volume()
-    color = (255, 200, 0) if volume > 0 else (100, 100, 100)
+        pygame.draw.circle(game.screen, (50, 50, 50), (cx, cy + 4), 40)
+        pygame.draw.circle(game.screen, color, (cx, cy), 40)
+        pygame.draw.circle(game.screen, (255, 230, 100), (cx, cy), 40, 3)
+        icon = "M" if volume > 0 else "✕"
+        icon_text = game.font.render(icon, True, (0, 0, 0))
+        game.screen.blit(icon_text, (cx - icon_text.get_width() // 2, cy - icon_text.get_height() // 2))
+        
+        if game.show_volume_bar:
+            bar_h = 150
+            bar_w = 10
+            bar_x = cx + 50
+            bar_y = cy - bar_h 
 
-
-    pygame.draw.circle(game.screen, (50, 50, 50), (cx, cy + 4), 40)
-    pygame.draw.circle(game.screen, color, (cx, cy), 40)
-    pygame.draw.circle(game.screen, (255, 230, 100), (cx, cy), 40, 3)
-    icon = "M" if volume > 0 else "✕"
-    icon_text = game.font.render(icon, True, (0, 0, 0))
-    game.screen.blit(icon_text, (cx - icon_text.get_width() // 2, cy - icon_text.get_height() // 2))
-    
-    if game.show_volume_bar:
-        bar_h = 150
-        bar_w = 10
-        bar_x = cx + 50
-        bar_y = cy - bar_h 
-
-        pygame.draw.rect(game.screen, (50, 50, 50), (bar_x, bar_y, bar_w, bar_h), border_radius=5)
-        fill_h = int(bar_h * volume)
-        pygame.draw.rect(game.screen, (255, 200, 0), (bar_x, bar_y + bar_h - fill_h, bar_w, fill_h), border_radius=5)
-            
-        vol_text = game.font.render(f"{int(volume * 100)}%", True, (255, 255, 255))
-        game.screen.blit(vol_text, (bar_x - 10, bar_y - 25))
+            pygame.draw.rect(game.screen, (50, 50, 50), (bar_x, bar_y, bar_w, bar_h), border_radius=5)
+            fill_h = int(bar_h * volume)
+            pygame.draw.rect(game.screen, (255, 200, 0), (bar_x, bar_y + bar_h - fill_h, bar_w, fill_h), border_radius=5)
+                
+            vol_text = game.font.render(f"{int(volume * 100)}%", True, (255, 255, 255))
+            game.screen.blit(vol_text, (bar_x - 10, bar_y - 25))
 
     pygame.display.flip()

@@ -33,8 +33,6 @@ class PokemonGame:
         self.player_hps = [int(c.get("hp", 100)) for c in self.player_deck]
         self.enemy_hps = [int(c.get("hp", 100)) for c in self.enemy_deck]
         self.enemy_index = 0
-        self.enemy_card = self.enemy_deck[self.enemy_index]
-        self.enemy_hp = self.enemy_hps[self.enemy_index]
         
         self.player_images = []
         for idx, c in enumerate(self.player_deck):
@@ -45,7 +43,6 @@ class PokemonGame:
         for idx, c in enumerate(self.enemy_deck):
             draw_loading(self.screen, self.font, f"Loading {c['name']}...", idx + 6, 10)
             self.enemy_images.append(load_card_image(c))
-        
         
         self.hovered_card_index = None
         self.dragging = False
@@ -61,7 +58,18 @@ class PokemonGame:
         self.game_over = False
         self.game_result = None
         self.show_volume_bar = False
-        self.volume_click_count = 0
+
+    @property
+    def enemy_card(self):
+        if self.enemy_index < len(self.enemy_deck):
+            return self.enemy_deck[self.enemy_index]
+        return None
+
+    @property
+    def enemy_hp(self):
+        if self.enemy_index < len(self.enemy_hps):
+            return self.enemy_hps[self.enemy_index]
+        return 0
 
     def load_cards(self):
         all_cards = fetch_cards(limit=10)
