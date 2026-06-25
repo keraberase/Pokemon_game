@@ -113,6 +113,14 @@ class PokemonGame:
         # Check enemy battle card
         if hit_test(pos, ex, ey):
             self.handle_double_click("enemy", self.enemy_card, now)
+            return
+
+        # Check player trash pile
+        tx, ty = ZONES["player_trash"]
+        if hit_test(pos, tx, ty):
+            trashed_indices = [i for i, loc in enumerate(self.card_locations) if loc == "trash"]
+            if trashed_indices:
+                self.handle_double_click("trash", self.player_deck[trashed_indices[-1]], now)
 
     def process_mouse_motion(self, pos):
         if self.dragging:
@@ -166,6 +174,9 @@ class PokemonGame:
                     enemy_dmg = get_damage(enemy_atks[0])
                     self.player_hps[self.dragged_card_index] = do_attack(self.player_hps[self.dragged_card_index], enemy_dmg)
                     print(f"{self.enemy_card['name']} attacks back! Player HP: {self.player_hps[self.dragged_card_index]}")
+                    if self.player_hps[self.dragged_card_index] == 0:
+                        self.card_locations[self.dragged_card_index] = "trash"
+                        print(f"{battle_card['name']} died and went to trash!")
 
         self.dragging = False
         self.dragged_card_index = None
@@ -201,6 +212,12 @@ class PokemonGame:
         ebx, eby = ZONES["enemy_bench_start"]
         for i in range(4):
             self.screen.blit(self.card_back, (ebx + i * BENCH_STEP, eby))
+            
+        # Draw player trash pile (most recently trashed card)
+        tx, ty = ZONES["player_trash"]
+        trashed_indices = [i for i, loc in enumerate(self.card_locations) if loc == "trash"]
+        if trashed_indices:
+            self.screen.blit(self.player_images[trashed_indices[-1]], (tx, ty))
             
         # Draw dragged card
         if self.dragging and self.dragged_card_index is not None:
