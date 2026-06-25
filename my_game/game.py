@@ -5,6 +5,9 @@ from game_logic import *
 from trash import *
 from render import render as render_game
 from events import *
+from endscreen import *
+from loading_screen import draw_loading
+from sound import *
 
 class PokemonGame:
     def __init__(self):
@@ -12,7 +15,8 @@ class PokemonGame:
         self.screen = pygame.display.set_mode((SCREEN_W, SCREEN_H))
         pygame.display.set_caption("Pokemon Card Game")
         self.font = pygame.font.SysFont("Arial", 24)
-        
+
+        draw_loading(self.screen, self.font, "Loading...", 0, 10)
         
         self.background = pygame.image.load("images/background.jpg")
         self.background = pygame.transform.scale(self.background, (SCREEN_W, SCREEN_H))
@@ -23,8 +27,8 @@ class PokemonGame:
         
         
         self.load_cards()
-        
-        self.enemy_locations = ["bench"] * 5
+        play_music("sounds/megalovania.mp3")
+        self.enemy_locations = ["battle"] + ["bench"] * 4 
         self.card_locations = ["bench"] * 5
         self.player_hps = [int(c.get("hp", 100)) for c in self.player_deck]
         self.enemy_hps = [int(c.get("hp", 100)) for c in self.enemy_deck]
@@ -32,9 +36,15 @@ class PokemonGame:
         self.enemy_card = self.enemy_deck[self.enemy_index]
         self.enemy_hp = self.enemy_hps[self.enemy_index]
         
-        
-        self.player_images = [load_card_image(c) for c in self.player_deck]
-        self.enemy_image = load_card_image(self.enemy_card)
+        self.player_images = []
+        for idx, c in enumerate(self.player_deck):
+            draw_loading(self.screen, self.font, f"Loading {c['name']}...", idx + 1, 10)
+            self.player_images.append(load_card_image(c))
+            
+        self.enemy_images = []
+        for idx, c in enumerate(self.enemy_deck):
+            draw_loading(self.screen, self.font, f"Loading {c['name']}...", idx + 6, 10)
+            self.enemy_images.append(load_card_image(c))
         
         
         self.hovered_card_index = None
@@ -46,8 +56,12 @@ class PokemonGame:
         self.preview_image = None
         self.last_click_time = 0
         self.last_click_index = None
-        
+        self.enemy_on_field = True
         self.running = True
+        self.game_over = False
+        self.game_result = None
+        self.show_volume_bar = False
+        self.volume_click_count = 0
 
     def load_cards(self):
         all_cards = fetch_cards(limit=10)
@@ -57,7 +71,9 @@ class PokemonGame:
     def handle_double_click(self, index, card, now):
         self.preview_card = card
         self.preview_image = load_large_image(card)
-        
+
+    
+
     def handle_events(self):
         now = pygame.time.get_ticks()
         for event in pygame.event.get():
@@ -65,7 +81,12 @@ class PokemonGame:
                 self.running = False
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    self.preview_card = None
+                    if self.game_over:
+                        self.running = False  
+                    else:
+                        self.preview_card = None
+                elif event.key == pygame.K_r and self.game_over:
+                    self.__init__()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 process_mouse_down(self, event.pos, now)
             elif event.type == pygame.MOUSEMOTION:

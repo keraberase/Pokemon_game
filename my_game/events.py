@@ -2,6 +2,7 @@ from config import *
 from game_logic import *
 from card_utils import *
 from trash import *
+from sound import toggle_mute, set_volume
 
 def process_mouse_down(game, pos, now):
     bx, by = ZONES["player_bench_start"]
@@ -42,9 +43,30 @@ def process_mouse_down(game, pos, now):
     if hit_test(pos, ex, ey):
         if game.last_click_index == "enemy" and now - game.last_click_time < 400:
             game.preview_card = "enemy"
-            game.preview_image = load_large_image(game.enemy_card)
+            game.preview_image = load_large_image(game.enemy_deck[game.enemy_index])
         game.last_click_time = now
         game.last_click_index = "enemy"
+    
+    if game.show_volume_bar:
+        bar_h = 150
+        bar_x = SCREEN_W // 2 + 50
+        bar_y = SCREEN_H // 2 - bar_h
+        if bar_x < pos[0] < bar_x + 10 and bar_y < pos[1] < bar_y + bar_h:
+            
+            clicked_y = pos[1] - bar_y
+            new_volume = 1.0 - (clicked_y / bar_h)
+            set_volume(max(0.0, min(1.0, new_volume)))
+            return
+        
+    cx, cy = SCREEN_W // 2, SCREEN_H // 2
+    dx, dy = pos[0] - cx, pos[1] - cy
+    if dx*dx + dy*dy <= 40*40:
+        game.volume_click_count += 1
+        if game.volume_click_count % 2 == 1:
+            game.show_volume_bar = True   
+        else:
+            game.show_volume_bar = False
+        toggle_mute()
 
 def process_mouse_motion(game, pos):
     if game.dragging:
@@ -58,6 +80,7 @@ def process_mouse_motion(game, pos):
             card_x = bx + i * BENCH_STEP
             if hit_test(pos, card_x, by - 15, CARD_W, CARD_H + 15):
                 game.hovered_card_index = i
+             
 
 def process_mouse_up(game):
     if game.dragging and game.dragged_card_index is not None:
@@ -79,16 +102,18 @@ def process_mouse_up(game):
                 game.enemy_hp = game.enemy_hps[game.enemy_index]
                 print(f"{battle_card['name']} attacks! Enemy HP: {game.enemy_hp}")
 
-                if game.enemy_hp == 0:
-                    move_to_trash(game.enemy_locations, game.enemy_index)
-                    game.enemy_index += 1
-                    if game.enemy_index < len(game.enemy_deck):
-                        game.enemy_card = game.enemy_deck[game.enemy_index]
-                        game.enemy_image = load_card_image(game.enemy_card)
-                        game.enemy_hp = game.enemy_hps[game.enemy_index]
-                        print(f"New enemy: {game.enemy_card['name']}")
-                    else:
-                        print("You win!")
+            if game.enemy_hp == 0:
+                move_to_trash(game.enemy_locations, game.enemy_index)
+                game.enemy_index += 1
+                game.enemy_on_field = False
+            if game.enemy_index < len(game.enemy_deck):
+                game.enemy_card = game.enemy_deck[game.enemy_index]
+                game.enemy_hp = game.enemy_hps[game.enemy_index]
+                game.enemy_locations[game.enemy_index] = "battle"  # ← убираем с bench
+                game.enemy_on_field = True
+            else:
+                game.game_over = True
+                game.game_result = "win"
 
             enemy_atks = game.enemy_card.get("attacks", [])
             if enemy_atks:
