@@ -3,7 +3,7 @@ import pygame
 def init_sound():
     pygame.mixer.init()
 
-def play_music(path, volume=0.5, loop=True):
+def play_music(path, volume=0.1, loop=True):
     pygame.mixer.music.load(path)
     pygame.mixer.music.set_volume(volume)
     pygame.mixer.music.play(-1 if loop else 0)  

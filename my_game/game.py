@@ -72,9 +72,12 @@ class PokemonGame:
         return 0
 
     def load_cards(self):
-        all_cards = fetch_cards(limit=10)
+        all_cards = fetch_cards(limit=20)
+
+        random.shuffle(all_cards)
+
         self.player_deck = all_cards[:5]
-        self.enemy_deck = all_cards[5:]
+        self.enemy_deck = all_cards[5:10]
 
     def handle_double_click(self, index, card, now):
         self.preview_card = card

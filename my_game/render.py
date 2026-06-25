@@ -56,14 +56,13 @@ def render(game):
     else:
         cx, cy = SCREEN_W // 2, SCREEN_H // 2
         volume = pygame.mixer.music.get_volume()
-        color = (255, 200, 0) if volume > 0 else (100, 100, 100)
+        color = (154, 15, 36) if volume > 0 else (100, 100, 100)
 
         pygame.draw.circle(game.screen, (50, 50, 50), (cx, cy + 4), 40)
         pygame.draw.circle(game.screen, color, (cx, cy), 40)
-        pygame.draw.circle(game.screen, (255, 230, 100), (cx, cy), 40, 3)
-        icon = "M" if volume > 0 else "✕"
-        icon_text = game.font.render(icon, True, (0, 0, 0))
-        game.screen.blit(icon_text, (cx - icon_text.get_width() // 2, cy - icon_text.get_height() // 2))
+        pygame.draw.circle(game.screen, (141, 8, 25), (cx, cy), 40, 3)
+        
+        
         
         if game.show_volume_bar:
             bar_h = 150
@@ -73,7 +72,7 @@ def render(game):
 
             pygame.draw.rect(game.screen, (50, 50, 50), (bar_x, bar_y, bar_w, bar_h), border_radius=5)
             fill_h = int(bar_h * volume)
-            pygame.draw.rect(game.screen, (255, 200, 0), (bar_x, bar_y + bar_h - fill_h, bar_w, fill_h), border_radius=5)
+            pygame.draw.rect(game.screen, (141, 8, 25), (bar_x, bar_y + bar_h - fill_h, bar_w, fill_h), border_radius=5)
                 
             vol_text = game.font.render(f"{int(volume * 100)}%", True, (255, 255, 255))
             game.screen.blit(vol_text, (bar_x - 10, bar_y - 25))

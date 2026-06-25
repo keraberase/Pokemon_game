@@ -1,6 +1,7 @@
 import requests
 import pygame
 import os
+import random
 
 def load_card_image(card, size=(90, 102)):
     card_id = card["id"]
@@ -17,7 +18,8 @@ def load_large_image(card):
     return load_card_image(card, size=(250, 350))
 
 def fetch_cards(limit=10):
-    response = requests.get("https://api.pokemontcg.io/v2/cards", params={"pageSize": limit})
+    page = random.randint(1, 400)
+    response = requests.get("https://api.pokemontcg.io/v2/cards", params={"page": page,"pageSize": limit})
     if response.status_code != 200:
         raise RuntimeError(f"Error API: {response.status_code}")
     return response.json()["data"]
