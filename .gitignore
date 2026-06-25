@@ -5,7 +5,6 @@ __pycache__/
 
 
 cache/
-images/
 *.png
 *.jpg
 *.jpeg
