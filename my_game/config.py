@@ -3,6 +3,8 @@ SCREEN_H = 600
 CARD_W = 90
 CARD_H = 102
 BENCH_STEP = 101
+LOG_X = 20
+LOG_Y = 10
 
 ZONES = {
     "enemy_bench_start": (153, 19),

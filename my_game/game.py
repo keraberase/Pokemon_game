@@ -44,6 +44,10 @@ class PokemonGame:
             draw_loading(self.screen, self.font, f"Loading {c['name']}...", index + 6, 10)
             self.enemy_images.append(load_card_image(c))
         
+        self.battle_log = []
+        self.show_battle_log = True
+        self.log_scroll = 0
+        
         self.hovered_card_index = None
         self.dragging = False
         self.dragged_card_index = None
@@ -58,6 +62,9 @@ class PokemonGame:
         self.game_over = False
         self.game_result = None
         self.show_volume_bar = False
+        self.attack_menu_open = False
+        self.attack_menu_buttons = []
+        self.pending_attack_card_index = None
 
     def enemy_card(self):
         if self.enemy_index < len(self.enemy_deck):
@@ -78,6 +85,7 @@ class PokemonGame:
         self.player_deck = all_cards[:5]
         self.enemy_deck = all_cards[5:]
 
+
     def handle_events(self):
         now = pygame.time.get_ticks()
         for event in pygame.event.get():
@@ -93,12 +101,14 @@ class PokemonGame:
                     self.__init__()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 process_mouse_down(self, event.pos, now)
+            elif event.type == pygame.MOUSEWHEEL: 
+                process_mouse_wheel(self, event.y)
             elif event.type == pygame.MOUSEMOTION:
                 process_mouse_motion(self, event.pos)
             elif event.type == pygame.MOUSEBUTTONUP:
                 process_mouse_up(self)
 
-    
+        
     def render(self):
         render_game(self)
 

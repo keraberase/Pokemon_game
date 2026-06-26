@@ -3,6 +3,7 @@ from config import *
 from game_logic import *
 from trash import *
 from endscreen import *
+from attack_menu import draw_attack_menu
 
 
 def render(game):
@@ -67,12 +68,22 @@ def render(game):
         game.screen.blit(overlay, (0, 0))
         game.screen.blit(game.preview_image, (275, 125))
 
-    mouse_pos = pygame.mouse.get_pos()
-    game.screen.blit(game.font.render(f"X:{mouse_pos[0]} Y:{mouse_pos[1]}", True, (255, 255, 0)), (10, 10))
+    # mouse_pos = pygame.mouse.get_pos()
+    # game.screen.blit(game.font.render(f"X:{mouse_pos[0]} Y:{mouse_pos[1]}", True, (255, 255, 0)), (10, 10))
     # game over
     if game.game_over:
         if game.game_result == "win":
             draw_end_screen(game.screen, game.font, "YOU WIN!", (255, 215, 0))
         else:
             draw_end_screen(game.screen, game.font, "YOU LOSE!", (255, 0, 0))
+
+
+    if game.attack_menu_open:
+        attacks = game.player_deck[game.pending_attack_card_index].get("attacks", [])
+        game.attack_menu_buttons = draw_attack_menu(game.screen, game.font, attacks)
+    
+
+    draw_log(game.screen, game.font, game.battle_log, game.show_battle_log, game.log_scroll)
+
+
     pygame.display.flip()
