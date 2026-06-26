@@ -76,7 +76,7 @@ class PokemonGame:
         random.shuffle(all_cards)
 
         self.player_deck = all_cards[:5]
-        self.enemy_deck = all_cards[5:10]
+        self.enemy_deck = all_cards[5:]
 
     def handle_events(self):
         now = pygame.time.get_ticks()
