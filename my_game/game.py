@@ -35,13 +35,13 @@ class PokemonGame:
         self.enemy_index = 0
         
         self.player_images = []
-        for idx, c in enumerate(self.player_deck):
-            draw_loading(self.screen, self.font, f"Loading {c['name']}...", idx + 1, 10)
+        for index, c in enumerate(self.player_deck):
+            draw_loading(self.screen, self.font, f"Loading {c['name']}...", index + 1, 10)
             self.player_images.append(load_card_image(c))
             
         self.enemy_images = []
-        for idx, c in enumerate(self.enemy_deck):
-            draw_loading(self.screen, self.font, f"Loading {c['name']}...", idx + 6, 10)
+        for index, c in enumerate(self.enemy_deck):
+            draw_loading(self.screen, self.font, f"Loading {c['name']}...", index + 6, 10)
             self.enemy_images.append(load_card_image(c))
         
         self.hovered_card_index = None
@@ -59,31 +59,24 @@ class PokemonGame:
         self.game_result = None
         self.show_volume_bar = False
 
-    @property
     def enemy_card(self):
         if self.enemy_index < len(self.enemy_deck):
             return self.enemy_deck[self.enemy_index]
         return None
 
-    @property
+    
     def enemy_hp(self):
         if self.enemy_index < len(self.enemy_hps):
             return self.enemy_hps[self.enemy_index]
         return 0
 
     def load_cards(self):
-        all_cards = fetch_cards(limit=20)
+        all_cards = fetch_cards(limit=10)
 
         random.shuffle(all_cards)
 
         self.player_deck = all_cards[:5]
         self.enemy_deck = all_cards[5:10]
-
-    def handle_double_click(self, index, card, now):
-        self.preview_card = card
-        self.preview_image = load_large_image(card)
-
-    
 
     def handle_events(self):
         now = pygame.time.get_ticks()

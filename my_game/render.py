@@ -10,7 +10,7 @@ def render(game):
 
     ex, ey = ZONES["enemy_battle"]
     if game.enemy_on_field:
-        draw_text(game.screen, game.font, f"HP: {game.enemy_hp}", (ex, ey - 25))
+        draw_text(game.screen, game.font, f"HP: {game.enemy_hp()}", (ex, ey - 25))
         game.screen.blit(game.enemy_images[game.enemy_index], (ex, ey))
 
     px, py = ZONES["player_battle"]

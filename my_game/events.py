@@ -56,7 +56,7 @@ def process_mouse_down(game, pos, now):
     if hit_test(pos, ex, ey) and game.enemy_on_field:
         if game.last_click_index == "enemy" and now - game.last_click_time < 400:
             game.preview_card = "enemy"
-            game.preview_image = load_large_image(game.enemy_card)
+            game.preview_image = load_large_image(game.enemy_card())
         game.last_click_time = now
         game.last_click_index = "enemy"
     
@@ -111,9 +111,9 @@ def process_mouse_up(game):
             if atks:
                 dmg = get_damage(atks[0])
                 game.enemy_hps[game.enemy_index] = do_attack(game.enemy_hps[game.enemy_index], dmg)
-                print(f"{battle_card['name']} attacks! Enemy HP: {game.enemy_hp}")
+                print(f"{battle_card['name']} attacks! Enemy HP: {game.enemy_hp()}")
 
-            if game.enemy_hp == 0:
+            if game.enemy_hp() == 0:
                 move_to_trash(game.enemy_locations, game.enemy_index)
                 game.enemy_index += 1
                 game.enemy_on_field = False
@@ -127,11 +127,11 @@ def process_mouse_up(game):
 
             # enemy attacks back
             if not game.game_over and game.enemy_on_field:
-                enemy_atks = game.enemy_card.get("attacks", [])
+                enemy_atks = game.enemy_card().get("attacks", [])
                 if enemy_atks:
                     enemy_dmg = get_damage(enemy_atks[0])
                     game.player_hps[game.dragged_card_index] = do_attack(game.player_hps[game.dragged_card_index], enemy_dmg)
-                    print(f"{game.enemy_card['name']} attacks back! Player HP: {game.player_hps[game.dragged_card_index]}")
+                    print(f"{game.enemy_card()['name']} attacks back! Player HP: {game.player_hps[game.dragged_card_index]}")
                     if game.player_hps[game.dragged_card_index] == 0:
                         move_to_trash(game.card_locations, game.dragged_card_index)
                         print(f"{battle_card['name']} died!")
