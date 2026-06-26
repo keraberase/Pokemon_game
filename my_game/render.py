@@ -38,12 +38,34 @@ def render(game):
     if game.dragging and game.dragged_card_index is not None:
         game.screen.blit(game.player_images[game.dragged_card_index], (game.drag_pos[0] - 45, game.drag_pos[1] - 51))
 
+    # pokeball volume button (rendered BEFORE preview overlay so card hides it)
+    if not game.game_over:
+        cx, cy = SCREEN_W // 2, SCREEN_H // 2
+        volume = pygame.mixer.music.get_volume()
+        color = (154, 15, 36) if volume > 0 else (100, 100, 100)
+
+        pygame.draw.circle(game.screen, (50, 50, 50), (cx, cy + 4), 40)
+        pygame.draw.circle(game.screen, color, (cx, cy), 40)
+        pygame.draw.circle(game.screen, (141, 8, 25), (cx, cy), 40, 3)
+
+        if game.show_volume_bar:
+            bar_h = 150
+            bar_w = 10
+            bar_x = cx + 50
+            bar_y = cy - bar_h
+
+            pygame.draw.rect(game.screen, (50, 50, 50), (bar_x, bar_y, bar_w, bar_h), border_radius=5)
+            fill_h = int(bar_h * volume)
+            pygame.draw.rect(game.screen, (141, 8, 25), (bar_x, bar_y + bar_h - fill_h, bar_w, fill_h), border_radius=5)
+
+            vol_text = game.font.render(f"{int(volume * 100)}%", True, (255, 255, 255))
+            game.screen.blit(vol_text, (bar_x - 10, bar_y - 25))
+
     if game.preview_card is not None and game.preview_image is not None:
         overlay = pygame.Surface((SCREEN_W, SCREEN_H), pygame.SRCALPHA)
         overlay.fill((0, 0, 0, 180))
         game.screen.blit(overlay, (0, 0))
         game.screen.blit(game.preview_image, (275, 125))
-        draw_text(game.screen, game.font, "ESC - close", (310, 490), (200, 200, 200))
 
     mouse_pos = pygame.mouse.get_pos()
     game.screen.blit(game.font.render(f"X:{mouse_pos[0]} Y:{mouse_pos[1]}", True, (255, 255, 0)), (10, 10))
@@ -53,28 +75,4 @@ def render(game):
             draw_end_screen(game.screen, game.font, "YOU WIN!", (255, 215, 0))
         else:
             draw_end_screen(game.screen, game.font, "YOU LOSE!", (255, 0, 0))
-    else:
-        cx, cy = SCREEN_W // 2, SCREEN_H // 2
-        volume = pygame.mixer.music.get_volume()
-        color = (154, 15, 36) if volume > 0 else (100, 100, 100)
-
-        pygame.draw.circle(game.screen, (50, 50, 50), (cx, cy + 4), 40)
-        pygame.draw.circle(game.screen, color, (cx, cy), 40)
-        pygame.draw.circle(game.screen, (141, 8, 25), (cx, cy), 40, 3)
-        
-        
-        
-        if game.show_volume_bar:
-            bar_h = 150
-            bar_w = 10
-            bar_x = cx + 50
-            bar_y = cy - bar_h 
-
-            pygame.draw.rect(game.screen, (50, 50, 50), (bar_x, bar_y, bar_w, bar_h), border_radius=5)
-            fill_h = int(bar_h * volume)
-            pygame.draw.rect(game.screen, (141, 8, 25), (bar_x, bar_y + bar_h - fill_h, bar_w, fill_h), border_radius=5)
-                
-            vol_text = game.font.render(f"{int(volume * 100)}%", True, (255, 255, 255))
-            game.screen.blit(vol_text, (bar_x - 10, bar_y - 25))
-
     pygame.display.flip()

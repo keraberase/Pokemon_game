@@ -22,6 +22,12 @@ def process_mouse_down(game, pos, now):
     ex, ey = ZONES["enemy_battle"]
     cx, cy = SCREEN_W // 2, SCREEN_H // 2
 
+    # close preview card on any click
+    if game.preview_card is not None:
+        game.preview_card = None
+        game.preview_image = None
+        return
+
     # auto-close volume bar
     if game.show_volume_bar:
         dx, dy = pos[0] - cx, pos[1] - cy
