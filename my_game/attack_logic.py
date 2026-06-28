@@ -1,7 +1,6 @@
 
 from game_logic import *
 from trash import *
-from game_logic import *
 
 def execute_attack(game, attack_index):
     battle_card = game.player_deck[game.pending_attack_card_index]

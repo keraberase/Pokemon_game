@@ -35,7 +35,7 @@ def draw_attack_menu(screen, font, attacks):
 
         buttons.append((btn_x, btn_y, btn_w, btn_h, i))
 
-    draw_text(screen, font, "ESC - cancel", (SCREEN_W // 2 - 50, 500), (150, 150, 150))
+    
     return buttons
 
 

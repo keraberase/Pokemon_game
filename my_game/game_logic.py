@@ -6,9 +6,6 @@ def get_damage(atk):
     digits = ''.join(filter(str.isdigit, atk.get("damage", "")))
     return int(digits) if digits else 10
 
-def do_attack(defender_hp, damage):
-    return max(0, defender_hp - damage)
-
 def get_battle_index(card_locations):
     return next((i for i in range(5) if card_locations[i] == "battle"), None)
 

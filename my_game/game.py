@@ -8,6 +8,7 @@ from events import *
 from endscreen import *
 from loading_screen import draw_loading
 from sound import *
+import random
 
 class PokemonGame:
     def __init__(self):

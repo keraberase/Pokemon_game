@@ -27,9 +27,9 @@ def process_mouse_down(game, pos, now):
 
     
     if game.attack_menu_open:
-        idx = get_clicked_attack(pos, game.attack_menu_buttons)
-        if idx is not None:
-            execute_attack(game, idx)
+        index = get_clicked_attack(pos, game.attack_menu_buttons)
+        if index is not None:
+            execute_attack(game, index)
             game.attack_menu_open = False
             game.pending_attack_card_index = None
         return
@@ -139,6 +139,3 @@ def process_mouse_wheel(game, y):
             game.log_scroll - y
         ))
             
-    game.dragging = False
-    game.dragged_card_index = None
-    game.drag_from = None
